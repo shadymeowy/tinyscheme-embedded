@@ -13,9 +13,6 @@
  */
 
 #include "scheme-private.h"
-#ifndef WIN32
-# include <unistd.h>
-#endif
 #ifdef WIN32
 #define snprintf _snprintf
 #endif
@@ -23,8 +20,6 @@
 # include <math.h>
 #endif
 
-#include <limits.h>
-#include <float.h>
 #include <ctype.h>
 
 #define TOK_EOF     (-1)
@@ -437,7 +432,7 @@ static double round_per_R5RS(double x) {
 #endif
 
 static int is_zero_double(double x) {
- return x<DBL_MIN && x>-DBL_MIN;
+ return x==0;
 }
 
 static long binary_decode(const char *s) {
@@ -951,7 +946,7 @@ pointer gensym(scheme *sc) {
      pointer x;
      char name[40];
 
-     for(; sc->gensym_cnt<LONG_MAX; sc->gensym_cnt++) {
+     for(;; sc->gensym_cnt++) {
           snprintf(name,40,"gensym-%ld",sc->gensym_cnt);
 
           /* first check oblist */
@@ -1069,7 +1064,7 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
                c='\t';
      } else if(name[1]=='x' && name[2]!=0) {
           int c1=0;
-          if(sscanf(name+2,"%x",(unsigned int *)&c1)==1 && c1 < UCHAR_MAX) {
+          if(sscanf(name+2,"%x",(unsigned int *)&c1)==1 && c1 < 255) {
                c=c1;
           } else {
                return sc->NIL;
