@@ -16,20 +16,16 @@ extern "C" {
 # define STANDALONE 1
 #endif
 
+#define SCHEME_EXPORT
+
 #ifndef _MSC_VER
 # define USE_STRCASECMP 1
 # ifndef USE_STRLWR
 #   define USE_STRLWR 1
 # endif
-# define SCHEME_EXPORT
 #else
 # define USE_STRCASECMP 0
 # define USE_STRLWR 0
-# ifdef _SCHEME_SOURCE
-#  define SCHEME_EXPORT __declspec(dllexport)
-# else
-#  define SCHEME_EXPORT __declspec(dllimport)
-# endif
 #endif
 
 #if USE_NO_FEATURES
