@@ -20,20 +20,14 @@ extern "C" {
 
 #if USE_NO_FEATURES
 # define USE_MATH 0
-# define USE_CHAR_CLASSIFIERS 0
 # define USE_STRING_PORTS 0
 # define USE_ERROR_HOOK 0
 # define USE_TRACING 0
 # define USE_COLON_HOOK 0
-# define USE_PLIST 0
 #endif
 
 #ifndef USE_MATH         /* If math support is needed */
 # define USE_MATH 1
-#endif
-
-#ifndef USE_CHAR_CLASSIFIERS  /* If char classifiers are needed */
-# define USE_CHAR_CLASSIFIERS 1
 #endif
 
 #ifndef USE_STRING_PORTS      /* Enable string ports */
@@ -42,10 +36,6 @@ extern "C" {
 
 #ifndef USE_TRACING
 # define USE_TRACING 1
-#endif
-
-#ifndef USE_PLIST
-# define USE_PLIST 0
 #endif
 
 /* To force system errors through user-defined error handling (see *error-hook*) */

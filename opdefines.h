@@ -117,13 +117,6 @@
     _OP_DEF(opexe_3, "integer?",                       1,  1,       TST_ANY,                         OP_INTEGERP         )
     _OP_DEF(opexe_3, "real?",                          1,  1,       TST_ANY,                         OP_REALP            )
     _OP_DEF(opexe_3, "char?",                          1,  1,       TST_ANY,                         OP_CHARP            )
-#if USE_CHAR_CLASSIFIERS
-    _OP_DEF(opexe_3, "char-alphabetic?",               1,  1,       TST_CHAR,                        OP_CHARAP           )
-    _OP_DEF(opexe_3, "char-numeric?",                  1,  1,       TST_CHAR,                        OP_CHARNP           )
-    _OP_DEF(opexe_3, "char-whitespace?",               1,  1,       TST_CHAR,                        OP_CHARWP           )
-    _OP_DEF(opexe_3, "char-upper-case?",               1,  1,       TST_CHAR,                        OP_CHARUP           )
-    _OP_DEF(opexe_3, "char-lower-case?",               1,  1,       TST_CHAR,                        OP_CHARLP           )
-#endif
     _OP_DEF(opexe_3, "port?",                          1,  1,       TST_ANY,                         OP_PORTP            )
     _OP_DEF(opexe_3, "input-port?",                    1,  1,       TST_ANY,                         OP_INPORTP          )
     _OP_DEF(opexe_3, "output-port?",                   1,  1,       TST_ANY,                         OP_OUTPORTP         )
@@ -145,10 +138,6 @@
     _OP_DEF(opexe_4, "reverse",                        1,  1,       TST_LIST,                        OP_REVERSE          )
     _OP_DEF(opexe_4, "list*",                          1,  INF_ARG, TST_NONE,                        OP_LIST_STAR        )
     _OP_DEF(opexe_4, "append",                         0,  INF_ARG, TST_NONE,                        OP_APPEND           )
-#if USE_PLIST
-    _OP_DEF(opexe_4, "put",                            3,  3,       TST_NONE,                        OP_PUT              )
-    _OP_DEF(opexe_4, "get",                            2,  2,       TST_NONE,                        OP_GET              )
-#endif
     _OP_DEF(opexe_4, "quit",                           0,  1,       TST_NUMBER,                      OP_QUIT             )
     _OP_DEF(opexe_4, "gc",                             0,  0,       0,                               OP_GC               )
     _OP_DEF(opexe_4, "gc-verbose",                     0,  1,       TST_NONE,                        OP_GCVERB           )

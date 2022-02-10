@@ -174,10 +174,6 @@ INTERFACE pointer set_cdr(pointer p, pointer q) { return cdr(p)=q; }
 
 INTERFACE INLINE int is_symbol(pointer p)   { return (type(p)==T_SYMBOL); }
 INTERFACE INLINE char *symname(pointer p)   { return strvalue(car(p)); }
-#if USE_PLIST
-SCHEME_EXPORT INLINE int hasprop(pointer p)     { return (typeflag(p)&T_SYMBOL); }
-#define symprop(p)       cdr(p)
-#endif
 
 INTERFACE INLINE int is_syntax(pointer p)   { return (typeflag(p)&T_SYNTAX); }
 INTERFACE INLINE int is_proc(pointer p)     { return (type(p)==T_PROC); }
@@ -222,14 +218,6 @@ INTERFACE INLINE void setimmutable(pointer p) { typeflag(p) |= T_IMMUTABLE; }
 #define cadaar(p)        car(cdr(car(car(p))))
 #define cadddr(p)        car(cdr(cdr(cdr(p))))
 #define cddddr(p)        cdr(cdr(cdr(cdr(p))))
-
-#if USE_CHAR_CLASSIFIERS
-static INLINE int Cisalpha(int c) { return isascii(c) && isalpha(c); }
-static INLINE int Cisdigit(int c) { return isascii(c) && isdigit(c); }
-static INLINE int Cisspace(int c) { return isascii(c) && isspace(c); }
-static INLINE int Cisupper(int c) { return isascii(c) && isupper(c); }
-static INLINE int Cislower(int c) { return isascii(c) && islower(c); }
-#endif
 
 static const char *charnames[32]={
  "nul",
@@ -3546,18 +3534,6 @@ static pointer opexe_3(scheme *sc, enum scheme_opcodes op) {
           s_retbool(is_number(car(sc->args))); /* All numbers are real */
      case OP_CHARP:     /* char? */
           s_retbool(is_character(car(sc->args)));
-#if USE_CHAR_CLASSIFIERS
-     case OP_CHARAP:     /* char-alphabetic? */
-          s_retbool(Cisalpha(ivalue(car(sc->args))));
-     case OP_CHARNP:     /* char-numeric? */
-          s_retbool(Cisdigit(ivalue(car(sc->args))));
-     case OP_CHARWP:     /* char-whitespace? */
-          s_retbool(Cisspace(ivalue(car(sc->args))));
-     case OP_CHARUP:     /* char-upper-case? */
-          s_retbool(Cisupper(ivalue(car(sc->args))));
-     case OP_CHARLP:     /* char-lower-case? */
-          s_retbool(Cislower(ivalue(car(sc->args))));
-#endif
      case OP_PORTP:     /* port? */
           s_retbool(is_port(car(sc->args)));
      case OP_INPORTP:     /* input-port? */
@@ -3691,39 +3667,6 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
           }
 
           s_return(sc, reverse_in_place(sc, car(y), x));
-
-#if USE_PLIST
-     case OP_PUT:        /* put */
-          if (!hasprop(car(sc->args)) || !hasprop(cadr(sc->args))) {
-               Error_0(sc,"illegal use of put");
-          }
-          for (x = symprop(car(sc->args)), y = cadr(sc->args); x != sc->NIL; x = cdr(x)) {
-               if (caar(x) == y) {
-                    break;
-               }
-          }
-          if (x != sc->NIL)
-               cdar(x) = caddr(sc->args);
-          else
-               symprop(car(sc->args)) = cons(sc, cons(sc, y, caddr(sc->args)),
-                                symprop(car(sc->args)));
-          s_return(sc,sc->T);
-
-     case OP_GET:        /* get */
-          if (!hasprop(car(sc->args)) || !hasprop(cadr(sc->args))) {
-               Error_0(sc,"illegal use of get");
-          }
-          for (x = symprop(car(sc->args)), y = cadr(sc->args); x != sc->NIL; x = cdr(x)) {
-               if (caar(x) == y) {
-                    break;
-               }
-          }
-          if (x != sc->NIL) {
-               s_return(sc,cdar(x));
-          } else {
-               s_return(sc,sc->NIL);
-          }
-#endif /* USE_PLIST */
      case OP_QUIT:       /* quit */
           if(is_pair(sc->args)) {
                sc->retcode=ivalue(car(sc->args));
