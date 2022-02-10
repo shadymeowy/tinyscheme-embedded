@@ -231,7 +231,6 @@ static INLINE int Cisupper(int c) { return isascii(c) && isupper(c); }
 static INLINE int Cislower(int c) { return isascii(c) && islower(c); }
 #endif
 
-#if USE_ASCII_NAMES
 static const char *charnames[32]={
  "nul",
  "soh",
@@ -281,8 +280,6 @@ static int is_ascii_name(const char *name, int *pc) {
   }
   return 0;
 }
-
-#endif
 
 static int file_push(scheme *sc, const char *fname);
 static void file_pop(scheme *sc);
@@ -1137,10 +1134,8 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
           } else {
                return sc->NIL;
      }
-#if USE_ASCII_NAMES
           } else if(is_ascii_name(name+1,&c)) {
                /* nothing */
-#endif
           } else if(name[2]==0) {
                c=name[1];
           } else {
