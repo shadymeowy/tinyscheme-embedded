@@ -40,7 +40,6 @@ extern "C" {
 # define USE_ERROR_HOOK 0
 # define USE_TRACING 0
 # define USE_COLON_HOOK 0
-# define USE_DL 0
 # define USE_PLIST 0
 #endif
 
@@ -49,11 +48,6 @@ extern "C" {
  * Undefine it if you only care about faster speed and not strict Scheme compatibility.
  */
 #define USE_SCHEME_STACK
-
-#if USE_DL
-# define USE_INTERFACE 1
-#endif
-
 
 #ifndef USE_MATH         /* If math support is needed */
 # define USE_MATH 1
@@ -102,10 +96,6 @@ extern "C" {
 
 #ifndef INLINE
 # define INLINE
-#endif
-
-#ifndef USE_INTERFACE
-# define USE_INTERFACE 0
 #endif
 
 #ifndef SHOW_ERROR_LINE   /* Show error line in file */
@@ -161,71 +151,6 @@ void putstr(scheme *sc, const char *s);
 int list_length(scheme *sc, pointer a);
 int eqv(pointer a, pointer b);
 
-
-#if USE_INTERFACE
-struct scheme_interface {
-  void (*scheme_define)(scheme *sc, pointer env, pointer symbol, pointer value);
-  pointer (*cons)(scheme *sc, pointer a, pointer b);
-  pointer (*immutable_cons)(scheme *sc, pointer a, pointer b);
-  pointer (*reserve_cells)(scheme *sc, int n);
-  pointer (*mk_integer)(scheme *sc, long num);
-  pointer (*mk_real)(scheme *sc, double num);
-  pointer (*mk_symbol)(scheme *sc, const char *name);
-  pointer (*gensym)(scheme *sc);
-  pointer (*mk_string)(scheme *sc, const char *str);
-  pointer (*mk_counted_string)(scheme *sc, const char *str, int len);
-  pointer (*mk_character)(scheme *sc, int c);
-  pointer (*mk_vector)(scheme *sc, int len);
-  pointer (*mk_foreign_func)(scheme *sc, foreign_func f);
-  void (*putstr)(scheme *sc, const char *s);
-  void (*putcharacter)(scheme *sc, int c);
-
-  int (*is_string)(pointer p);
-  char *(*string_value)(pointer p);
-  int (*is_number)(pointer p);
-  num (*nvalue)(pointer p);
-  long (*ivalue)(pointer p);
-  double (*rvalue)(pointer p);
-  int (*is_integer)(pointer p);
-  int (*is_real)(pointer p);
-  int (*is_character)(pointer p);
-  long (*charvalue)(pointer p);
-  int (*is_list)(scheme *sc, pointer p);
-  int (*is_vector)(pointer p);
-  int (*list_length)(scheme *sc, pointer vec);
-  long (*vector_length)(pointer vec);
-  void (*fill_vector)(pointer vec, pointer elem);
-  pointer (*vector_elem)(pointer vec, int ielem);
-  pointer (*set_vector_elem)(pointer vec, int ielem, pointer newel);
-  int (*is_port)(pointer p);
-
-  int (*is_pair)(pointer p);
-  pointer (*pair_car)(pointer p);
-  pointer (*pair_cdr)(pointer p);
-  pointer (*set_car)(pointer p, pointer q);
-  pointer (*set_cdr)(pointer p, pointer q);
-
-  int (*is_symbol)(pointer p);
-  char *(*symname)(pointer p);
-
-  int (*is_syntax)(pointer p);
-  int (*is_proc)(pointer p);
-  int (*is_foreign)(pointer p);
-  char *(*syntaxname)(pointer p);
-  int (*is_closure)(pointer p);
-  int (*is_macro)(pointer p);
-  pointer (*closure_code)(pointer p);
-  pointer (*closure_env)(pointer p);
-
-  int (*is_continuation)(pointer p);
-  int (*is_promise)(pointer p);
-  int (*is_environment)(pointer p);
-  int (*is_immutable)(pointer p);
-  void (*setimmutable)(pointer p);
-  void (*load_file)(scheme *sc, FILE *fin);
-  void (*load_string)(scheme *sc, const char *input);
-};
-#endif
 
 #if !STANDALONE
 typedef struct scheme_registerable
