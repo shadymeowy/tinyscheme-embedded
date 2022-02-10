@@ -63,10 +63,6 @@ extern "C" {
 # define USE_COLON_HOOK 1
 #endif
 
-#ifndef STDIO_ADDS_CR    /* Define if DOS/Windows */
-# define STDIO_ADDS_CR 0
-#endif
-
 #ifndef INLINE
 # define INLINE
 #endif
