@@ -224,7 +224,6 @@ static int is_ascii_name(const char *name, int *pc) {
 
 static int file_push(scheme *sc, const char *fname);
 static void file_pop(scheme *sc);
-static int file_interactive(scheme *sc);
 static int is_one_of(char *s, int c);
 static int alloc_cellseg(scheme *sc, int n);
 static long binary_decode(const char *s);
@@ -1256,11 +1255,6 @@ static void file_pop(scheme *sc) {
    sc->file_i--;
    sc->loadport->_object._port=sc->load_stack+sc->file_i;
  }
-}
-
-static int file_interactive(scheme *sc) {
- return sc->file_i==0 && sc->load_stack[0].rep.stdio.file==stdin
-     && sc->inport->_object._port->kind&port_file;
 }
 
 static port *port_rep_from_filename(scheme *sc, const char *fn, int prop) {
@@ -2297,10 +2291,6 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
 
      switch (op) {
      case OP_LOAD:       /* load */
-          if(file_interactive(sc)) {
-               fprintf(sc->outport->_object._port->rep.stdio.file,
-               "Loading %s\n", strvalue(car(sc->args)));
-          }
           if (!file_push(sc,strvalue(car(sc->args)))) {
                Error_1(sc,"unable to open", car(sc->args));
           }
@@ -2327,15 +2317,6 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
        /* NOTREACHED */
      }
 
-       /* If interactive, be nice to user. */
-       if(file_interactive(sc))
-     {
-       sc->envir = sc->global_env;
-       dump_stack_reset(sc);
-       putstr(sc,"\n");
-       putstr(sc,prompt);
-     }
-
        /* Set up another iteration of REPL */
        sc->nesting=0;
        sc->save_inport=sc->inport;
@@ -2360,19 +2341,10 @@ static pointer opexe_0(scheme *sc, enum scheme_opcodes op) {
           s_return(sc, gensym(sc));
 
      case OP_VALUEPRINT: /* print evaluation result */
-          /* OP_VALUEPRINT is always pushed, because when changing from
-             non-interactive to interactive mode, it needs to be
-             already on the stack */
        if(sc->tracing) {
          putstr(sc,"\nGives: ");
        }
-       if(file_interactive(sc)) {
-         sc->print_flag = 1;
-         sc->args = sc->value;
-         s_goto(sc,OP_P0LIST);
-       } else {
-         s_return(sc,sc->value);
-       }
+       s_return(sc,sc->value);
 
      case OP_EVAL:       /* main part of evaluation */
 #if USE_TRACING
@@ -3599,11 +3571,7 @@ static pointer opexe_4(scheme *sc, enum scheme_opcodes op) {
                s_goto(sc,OP_P0LIST);
           } else {
                putstr(sc, "\n");
-               if(sc->interactive_repl) {
-                    s_goto(sc,OP_T0LVL);
-               } else {
-                    return sc->NIL;
-               }
+               return sc->NIL;
           }
 
      case OP_REVERSE:   /* reverse */
@@ -4366,7 +4334,6 @@ int scheme_init_custom_alloc(scheme *sc, func_alloc malloc, func_dealloc free) {
   sc->save_inport=sc->NIL;
   sc->loadport=sc->NIL;
   sc->nesting=0;
-  sc->interactive_repl=0;
 
   if (alloc_cellseg(sc,FIRST_CELLSEGS) != FIRST_CELLSEGS) {
     sc->no_memory=1;
@@ -4514,9 +4481,6 @@ void scheme_load_named_file(scheme *sc, FILE *fin, const char *filename) {
   sc->load_stack[0].rep.stdio.file=fin;
   sc->loadport=mk_port(sc,sc->load_stack);
   sc->retcode=0;
-  if(fin==stdin) {
-    sc->interactive_repl=1;
-  }
 
 #if SHOW_ERROR_LINE
   sc->load_stack[0].rep.stdio.curr_line = 0;
@@ -4545,7 +4509,6 @@ void scheme_load_string(scheme *sc, const char *cmd) {
   sc->load_stack[0].rep.string.curr=(char*)cmd;
   sc->loadport=mk_port(sc,sc->load_stack);
   sc->retcode=0;
-  sc->interactive_repl=0;
   sc->inport=sc->loadport;
   sc->args = mk_integer(sc,sc->file_i);
   Eval_Cycle(sc, OP_T0LVL);
@@ -4614,29 +4577,23 @@ void restore_from_C_call(scheme *sc)
 /* "func" and "args" are assumed to be already eval'ed. */
 pointer scheme_call(scheme *sc, pointer func, pointer args)
 {
-  int old_repl = sc->interactive_repl;
-  sc->interactive_repl = 0;
   save_from_C_call(sc);
   sc->envir = sc->global_env;
   sc->args = args;
   sc->code = func;
   sc->retcode = 0;
   Eval_Cycle(sc, OP_APPLY);
-  sc->interactive_repl = old_repl;
   restore_from_C_call(sc);
   return sc->value;
 }
 
 pointer scheme_eval(scheme *sc, pointer obj)
 {
-  int old_repl = sc->interactive_repl;
-  sc->interactive_repl = 0;
   save_from_C_call(sc);
   sc->args = sc->NIL;
   sc->code = obj;
   sc->retcode = 0;
   Eval_Cycle(sc, OP_EVAL);
-  sc->interactive_repl = old_repl;
   restore_from_C_call(sc);
   return sc->value;
 }

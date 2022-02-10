@@ -84,8 +84,6 @@ pointer envir;           /* stack register for current environment */
 pointer code;            /* register for current code */
 pointer dump;            /* stack register for next evaluation */
 
-int interactive_repl;    /* are we in an interactive REPL? */
-
 struct cell _sink;
 pointer sink;            /* when mem. alloc. fails */
 struct cell _NIL;
