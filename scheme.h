@@ -18,16 +18,6 @@ extern "C" {
 
 #define SCHEME_EXPORT
 
-#ifndef _MSC_VER
-# define USE_STRCASECMP 1
-# ifndef USE_STRLWR
-#   define USE_STRLWR 1
-# endif
-#else
-# define USE_STRCASECMP 0
-# define USE_STRLWR 0
-#endif
-
 #if USE_NO_FEATURES
 # define USE_MATH 0
 # define USE_CHAR_CLASSIFIERS 0
@@ -76,14 +66,6 @@ extern "C" {
 
 #ifndef USE_COLON_HOOK   /* Enable qualified qualifier */
 # define USE_COLON_HOOK 1
-#endif
-
-#ifndef USE_STRCASECMP   /* stricmp for Unix */
-# define USE_STRCASECMP 0
-#endif
-
-#ifndef USE_STRLWR
-# define USE_STRLWR 1
 #endif
 
 #ifndef STDIO_ADDS_CR    /* Define if DOS/Windows */

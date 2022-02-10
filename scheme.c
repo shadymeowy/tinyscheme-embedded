@@ -27,13 +27,6 @@
 #include <float.h>
 #include <ctype.h>
 
-#if USE_STRCASECMP
-#include <strings.h>
-# ifndef __APPLE__
-#  define stricmp strcasecmp
-# endif
-#endif
-
 /* Used for documentation purposes, to signal functions in 'interface' */
 #define INTERFACE
 
@@ -63,34 +56,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-
-#ifdef __APPLE__
-static int stricmp(const char *s1, const char *s2)
-{
-  unsigned char c1, c2;
-  do {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 < c2)
-      return -1;
-    else if (c1 > c2)
-      return 1;
-    s1++, s2++;
-  } while (c1 != 0);
-  return 0;
-}
-#endif /* __APPLE__ */
-
-#if USE_STRLWR
-static const char *strlwr(char *s) {
-  const char *p=s;
-  while(*s) {
-    *s=tolower(*s);
-    s++;
-  }
-  return p;
-}
-#endif
 
 #ifndef prompt
 # define prompt "ts> "
@@ -305,12 +270,12 @@ static const char *charnames[32]={
 static int is_ascii_name(const char *name, int *pc) {
   int i;
   for(i=0; i<32; i++) {
-     if(stricmp(name,charnames[i])==0) {
+     if(strcmp(name,charnames[i])==0) {
           *pc=i;
           return 1;
      }
   }
-  if(stricmp(name,"del")==0) {
+  if(strcmp(name,"del")==0) {
      *pc=127;
      return 1;
   }
@@ -847,7 +812,7 @@ static INLINE pointer oblist_find_by_name(scheme *sc, const char *name)
   for (x = vector_elem(sc->oblist, location); x != sc->NIL; x = cdr(x)) {
     s = symname(car(x));
     /* case-insensitive, per R5RS section 2. */
-    if(stricmp(name, s) == 0) {
+    if(strcmp(name, s) == 0) {
       return car(x);
     }
   }
@@ -883,7 +848,7 @@ static INLINE pointer oblist_find_by_name(scheme *sc, const char *name)
      for (x = sc->oblist; x != sc->NIL; x = cdr(x)) {
         s = symname(car(x));
         /* case-insensitive, per R5RS section 2. */
-        if(stricmp(name, s) == 0) {
+        if(strcmp(name, s) == 0) {
           return car(x);
         }
      }
@@ -1080,7 +1045,7 @@ static pointer mk_atom(scheme *sc, char *q) {
                               cons(sc,
                                    sc->QUOTE,
                                    cons(sc, mk_atom(sc,p+2), sc->NIL)),
-                              cons(sc, mk_symbol(sc,strlwr(q)), sc->NIL)));
+                              cons(sc, mk_symbol(sc,q), sc->NIL)));
      }
 #endif
 
@@ -1093,16 +1058,16 @@ static pointer mk_atom(scheme *sc, char *q) {
          c = *p++;
        }
        if (!isdigit(c)) {
-         return (mk_symbol(sc, strlwr(q)));
+         return (mk_symbol(sc, q));
        }
      } else if (c == '.') {
        has_dec_point=1;
        c = *p++;
        if (!isdigit(c)) {
-         return (mk_symbol(sc, strlwr(q)));
+         return (mk_symbol(sc, q));
        }
      } else if (!isdigit(c)) {
-       return (mk_symbol(sc, strlwr(q)));
+       return (mk_symbol(sc, q));
      }
 
      for ( ; (c = *p) != 0; ++p) {
@@ -1123,7 +1088,7 @@ static pointer mk_atom(scheme *sc, char *q) {
                           }
                        }
                }
-               return (mk_symbol(sc, strlwr(q)));
+               return (mk_symbol(sc, q));
           }
      }
      if(has_dec_point) {
@@ -1157,13 +1122,13 @@ static pointer mk_sharp_const(scheme *sc, char *name) {
           return (mk_integer(sc, x));
      } else if (*name == '\\') { /* #\w (character) */
           int c=0;
-          if(stricmp(name+1,"space")==0) {
+          if(strcmp(name+1,"space")==0) {
                c=' ';
-          } else if(stricmp(name+1,"newline")==0) {
+          } else if(strcmp(name+1,"newline")==0) {
                c='\n';
-          } else if(stricmp(name+1,"return")==0) {
+          } else if(strcmp(name+1,"return")==0) {
                c='\r';
-          } else if(stricmp(name+1,"tab")==0) {
+          } else if(strcmp(name+1,"tab")==0) {
                c='\t';
      } else if(name[1]=='x' && name[2]!=0) {
           int c1=0;
