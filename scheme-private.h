@@ -206,6 +206,38 @@ int is_environment(pointer p);
 int is_immutable(pointer p);
 void setimmutable(pointer p);
 
+/* macros for cell operations */
+#define typeflag(p)      ((p)->_flag)
+#define type(p)          (typeflag(p)&T_MASKTYPE)
+#define strvalue(p)      ((p)->_object._string._svalue)
+#define strlength(p)        ((p)->_object._string._length)
+#define ivalue_unchecked(p)       ((p)->_object._number.value.ivalue)
+#define rvalue_unchecked(p)       ((p)->_object._number.value.rvalue)
+#define set_num_integer(p)   (p)->_object._number.is_fixnum=1;
+#define set_num_real(p)      (p)->_object._number.is_fixnum=0;
+#define car(p)           ((p)->_object._cons._car)
+#define cdr(p)           ((p)->_object._cons._cdr)
+#define procnum(p)       ivalue(p)
+
+#define cont_dump(p)     cdr(p)
+#define setenvironment(p)    typeflag(p) = T_ENVIRONMENT
+#define is_atom(p)       (typeflag(p)&T_ATOM)
+#define setatom(p)       typeflag(p) |= T_ATOM
+#define clratom(p)       typeflag(p) &= CLRATOM
+#define is_mark(p)       (typeflag(p)&MARK)
+#define setmark(p)       typeflag(p) |= MARK
+#define clrmark(p)       typeflag(p) &= UNMARK
+#define caar(p)          car(car(p))
+#define cadr(p)          car(cdr(p))
+#define cdar(p)          cdr(car(p))
+#define cddr(p)          cdr(cdr(p))
+#define cadar(p)         car(cdr(car(p)))
+#define caddr(p)         car(cdr(cdr(p)))
+#define cdaar(p)         cdr(car(car(p)))
+#define cadaar(p)        car(cdr(car(car(p))))
+#define cadddr(p)        car(cdr(cdr(cdr(p))))
+#define cddddr(p)        cdr(cdr(cdr(cdr(p))))
+
 #ifdef __cplusplus
 }
 #endif

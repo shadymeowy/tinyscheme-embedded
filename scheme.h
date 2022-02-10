@@ -47,10 +47,6 @@ extern "C" {
 # define USE_COLON_HOOK 1
 #endif
 
-#ifndef INLINE
-# define INLINE
-#endif
-
 #ifndef SHOW_ERROR_LINE   /* Show error line in file */
 # define SHOW_ERROR_LINE 1
 #endif
@@ -104,8 +100,8 @@ void putstr(scheme *sc, const char *s);
 int list_length(scheme *sc, pointer a);
 int eqv(pointer a, pointer b);
 
+/*#define setimmutable(p)  typeflag(p) |= T_IMMUTABLE*/
 
-#if !STANDALONE
 typedef struct scheme_registerable
 {
   foreign_func  f;
@@ -116,8 +112,7 @@ scheme_registerable;
 void scheme_register_foreign_func_list(scheme * sc,
                                        scheme_registerable * list,
                                        int n);
-
-#endif /* !STANDALONE */
+void scheme_register_foreign_func(scheme * sc, scheme_registerable * sr);
 
 #ifdef __cplusplus
 }
