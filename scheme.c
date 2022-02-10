@@ -166,6 +166,12 @@ int is_environment(pointer p) { return (type(p)==T_ENVIRONMENT); }
 int is_immutable(pointer p) { return (typeflag(p)&T_IMMUTABLE); }
 void setimmutable(pointer p) { typeflag(p) |= T_IMMUTABLE; }
 
+static int Cisalpha(int c) { return isascii(c) && isalpha(c); }
+static int Cisdigit(int c) { return isascii(c) && isdigit(c); }
+static int Cisspace(int c) { return isascii(c) && isspace(c); }
+static int Cisupper(int c) { return isascii(c) && isupper(c); }
+static int Cislower(int c) { return isascii(c) && islower(c); }
+
 static const char *charnames[32]={
  "nul",
  "soh",
@@ -3481,6 +3487,16 @@ static pointer opexe_3(scheme *sc, enum scheme_opcodes op) {
           s_retbool(is_number(car(sc->args))); /* All numbers are real */
      case OP_CHARP:     /* char? */
           s_retbool(is_character(car(sc->args)));
+     case OP_CHARAP:     /* char-alphabetic? */
+          s_retbool(Cisalpha(ivalue(car(sc->args))));
+     case OP_CHARNP:     /* char-numeric? */
+          s_retbool(Cisdigit(ivalue(car(sc->args))));
+     case OP_CHARWP:     /* char-whitespace? */
+          s_retbool(Cisspace(ivalue(car(sc->args))));
+     case OP_CHARUP:     /* char-upper-case? */
+          s_retbool(Cisupper(ivalue(car(sc->args))));
+     case OP_CHARLP:     /* char-lower-case? */
+          s_retbool(Cislower(ivalue(car(sc->args))));
      case OP_PORTP:     /* port? */
           s_retbool(is_port(car(sc->args)));
      case OP_INPORTP:     /* input-port? */
