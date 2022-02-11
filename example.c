@@ -1,3 +1,5 @@
+// gcc scheme.c -lm example.c -o example.out
+
 #include "scheme.h"
 
 int main(int argc, char **argv)
