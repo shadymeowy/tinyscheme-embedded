@@ -10,7 +10,8 @@ Although it runs successfully on ESP32, it seems like there is not enough memory
 
 This is an opinionated version of TinyScheme; symbols are case-sensitive, there is no loading mechanism for dynamic libraries,
 interactive mode and most feature switches are removed or will be removed.
-I plan to add a REPL loop as an example though.
+
+There are a few usage examples; "Hello world", two different REPLs and an FFI example. 
 
 It still passes nearly all cases of http://cvs.savannah.gnu.org/viewvc/*checkout*/scm/scm/r4rstest.scm except case-sensitivity ones.
 (This is the test suite recommended by SLIB documentation).
