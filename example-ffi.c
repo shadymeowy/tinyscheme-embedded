@@ -1,4 +1,4 @@
-// gcc scheme.c -lm example-ffi.c -o example-ffi.out
+// gcc scheme.c example-ffi.c -o example-ffi.out
 
 #include "scheme.h"
 #include "scheme-private.h"

@@ -1,4 +1,4 @@
-// gcc scheme.c -lm example.c -o example.out
+// gcc scheme.c example.c -o example.out
 
 #include "scheme.h"
 

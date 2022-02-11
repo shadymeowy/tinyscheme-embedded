@@ -1,4 +1,4 @@
-// gcc scheme.c -lm -lreadline example-repl.c -o example-repl.out
+// gcc scheme.c -lreadline example-repl.c -o example-repl.out
 
 #include "scheme.h"
 #include "scheme-private.h"

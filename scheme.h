@@ -23,7 +23,7 @@ extern "C" {
 #endif
 
 #ifndef USE_MATH /* If math support is needed */
-#define USE_MATH 1
+#define USE_MATH 0
 #endif
 
 #ifndef USE_STRING_PORTS /* Enable string ports */
